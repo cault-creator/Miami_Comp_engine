@@ -1,4 +1,6 @@
-# Miami Data Toolkit (Codex handoff)
+# Miami Comp Engine Toolkit
+
+Miami Real Estate Comp Engine support toolkit.
 
 Free, public Miami-Dade property data + the Miami Comp Engine HTTP API.
 No paid data vendor anywhere in this stack. Everything is county public records.
