@@ -1,0 +1,7 @@
+.env
+browser-profiles/
+__pycache__/
+*.pyc
+fc_items*.json
+lp_results.json
+fub_farm.json
