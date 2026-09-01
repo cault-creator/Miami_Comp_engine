@@ -9,3 +9,5 @@ lp_results.json
 fub_farm.json
 pa_sales_import*.json
 pa_sales_import*.txt
+parcel_master*.jsonl
+parcel_master*.json

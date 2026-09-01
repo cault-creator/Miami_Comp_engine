@@ -14,6 +14,7 @@ No paid data vendor anywhere in this stack. Everything is county public records.
 | `scripts/auction_scraper.py` | Pure `httpx`. Foreclosure + tax-deed auction calendar (realforeclose). Runs anywhere, no browser |
 | `scripts/county_pa.py` | Property Appraiser lookup: owner, folio, SF, values, subdivision, zoning |
 | `scripts/clerk_lp_screen.py` | Clerk official-records name screen: lis pendens, tax liens, judgments, liens |
+| `scripts/build_parcel_master.py` | Batch-fetch PA parcel facts into resumable `parcel_master.jsonl` |
 | `scripts/import_pa_sales.py` | Convert PA sales history into clean `/api/import-sales` batches |
 
 ## Quickstart for Codex
@@ -61,6 +62,23 @@ python scripts/engine_client.py value "590 Lakeview Dr, Miami Beach, FL 33140"
 Keep `.env` private. Do not paste the key into chat, Slack, or source files.
 
 ## Import PA sales
+
+Build a parcel master from one-off addresses, address files, or auction output:
+
+```powershell
+python scripts/build_parcel_master.py --address "590 Lakeview Dr" --out parcel_master.jsonl
+python scripts/build_parcel_master.py --addresses-file addresses.csv --address-field address --out parcel_master.jsonl
+python scripts/build_parcel_master.py --auction-json fc_items.json --out parcel_master.jsonl
+```
+
+The parcel master writes one JSON record per line, checkpoints after every
+address, and skips completed addresses on resume.
+
+Preview a large seed list before opening the PA browser:
+
+```powershell
+python scripts/build_parcel_master.py --addresses-file addresses.csv --dry-run
+```
 
 Convert already-fetched PA parcel JSON into an engine import batch:
 

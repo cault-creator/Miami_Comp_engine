@@ -75,8 +75,7 @@ def parse_pa_text(txt):
     return p
 
 
-async def fetch_county(address_no_city):
-    b = await get_browser("mdc-pa", timeout_seconds=300)
+async def fetch_county_with_browser(b, address_no_city):
     await b.goto("https://apps.miamidadepa.gov/propertysearch/")
     await b.page.wait_for_timeout(4000)
     inp = b.page.locator("input:visible").first
@@ -87,3 +86,11 @@ async def fetch_county(address_no_city):
     if "Back to Search Results" not in txt:
         return {"error": "no single result / property page not reached", "raw": txt[:1500]}
     return parse_pa_text(txt)
+
+
+async def fetch_county(address_no_city):
+    b = await get_browser("mdc-pa", timeout_seconds=300)
+    try:
+        return await fetch_county_with_browser(b, address_no_city)
+    finally:
+        await b.close()
