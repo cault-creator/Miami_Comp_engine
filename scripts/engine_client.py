@@ -61,7 +61,7 @@ def main():
         result = engine_request("/api/value", {"address": args.address})
     else:
         rows = json.loads(Path(args.json_file).read_text())
-        result = engine_request("/api/import-sales", {"rows": rows})
+        result = engine_request("/api/import-sales", {"sales": rows})
 
     print(json.dumps(result, indent=2))
 

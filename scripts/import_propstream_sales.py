@@ -171,24 +171,26 @@ def normalize_sale(row, source_name, args):
     row_id_base = clean_folio or re.sub(r"[^a-z0-9]+", "-", address.lower()).strip("-")
     sale_id = f"propstream:{row_id_base}:{sale_date.replace('-', '')}:{price}"
 
+    living_sf = clean_int(row.get("Building Sqft"))
+    if not living_sf:
+        return None, "missing livingSF"
+
+    water_type = args.water_type or infer_water_type(row)
     return {
         "saleId": sale_id,
         "address": address,
-        "unit": unit,
-        "city": city,
         "zip": zip_code,
-        "salePrice": price,
-        "saleDate": sale_date,
-        "livingSf": clean_int(row.get("Building Sqft")),
-        "lotSf": clean_int(row.get("Lot Size Sqft")),
-        "yearBuilt": clean_int(row.get("Effective Year Built")),
+        "price": price,
+        "soldDate": sale_date,
+        "livingSF": living_sf,
+        "lotSF": clean_int(row.get("Lot Size Sqft")),
         "beds": clean_int(row.get("Bedrooms")),
         "baths": clean_float(row.get("Total Bathrooms")),
         "propertyClass": "sfr",
-        "waterType": args.water_type or infer_water_type(row),
+        "waterType": water_type,
+        "waterfront": water_type != "None",
         "conditionClass": args.condition_class or condition_class(row),
-        "subdivision": "",
-        "microMarket": args.micro_market or infer_micro_market(row),
+        "market": args.micro_market or infer_micro_market(row),
         "verified": False,
         "source": f"{args.source}:{price_source}:{source_name}",
     }, ""
@@ -219,7 +221,7 @@ def push_batches(rows):
     for idx in range(0, len(rows), SALE_BATCH_LIMIT):
         batch = rows[idx:idx + SALE_BATCH_LIMIT]
         print(f"Pushing batch {idx // SALE_BATCH_LIMIT + 1}: {len(batch)} rows", flush=True)
-        results.append(engine_request("/api/import-sales", {"rows": batch}))
+        results.append(engine_request("/api/import-sales", {"sales": batch}))
     return results
 
 

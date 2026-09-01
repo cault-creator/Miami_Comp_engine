@@ -137,10 +137,10 @@ def normalize_sale_rows(parcel, args):
     micro_market = args.micro_market or infer_micro_market(parcel)
     living_sf = clean_int(parcel.get("living_sf") or parcel.get("livingSf"))
     lot_sf = clean_int(parcel.get("lot_sf") or parcel.get("lotSf"))
-    year_built = clean_int(parcel.get("year_built") or parcel.get("yearBuilt"))
     beds = clean_int(parcel.get("beds"))
     baths = clean_int(parcel.get("baths"))
-    subdivision = clean_text(parcel.get("subdivision"))
+    if not living_sf:
+        return [], [f"Skipped parcel missing livingSF: {address or folio}"]
 
     rows = []
     skipped = []
@@ -163,21 +163,18 @@ def normalize_sale_rows(parcel, args):
         rows.append({
             "saleId": sale_id,
             "address": address,
-            "unit": unit,
-            "city": city,
             "zip": zip_code,
-            "salePrice": sale_price,
-            "saleDate": sale_date,
-            "livingSf": living_sf,
-            "lotSf": lot_sf,
-            "yearBuilt": year_built,
+            "price": sale_price,
+            "soldDate": sale_date,
+            "livingSF": living_sf,
+            "lotSF": lot_sf,
             "beds": beds,
             "baths": baths,
             "propertyClass": property_class,
             "waterType": water_type,
+            "waterfront": water_type != "None",
             "conditionClass": condition_class,
-            "subdivision": subdivision,
-            "microMarket": micro_market,
+            "market": micro_market,
             "verified": True,
             "source": args.source,
         })
@@ -240,7 +237,7 @@ def push_batches(rows):
     for idx in range(0, len(rows), SALE_BATCH_LIMIT):
         batch = rows[idx:idx + SALE_BATCH_LIMIT]
         print(f"Pushing batch {idx // SALE_BATCH_LIMIT + 1}: {len(batch)} rows", flush=True)
-        results.append(engine_request("/api/import-sales", {"rows": batch}))
+        results.append(engine_request("/api/import-sales", {"sales": batch}))
     return results
 
 

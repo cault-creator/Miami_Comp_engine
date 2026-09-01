@@ -21,19 +21,20 @@ land floor, water-tier scoring, confidence grade A/B/C).
 
 ### POST /api/import-sales  (x-engine-key)
 Bulk-add sale rows so the engine keeps learning. Dedupes by saleId. Max 500 rows/call.
+Send the request body as `{ "sales": [...] }`.
 
 Row shape (`SaleRow`):
 ```json
 {
   "saleId": "unique-string",
-  "address": "...", "unit": "", "city": "Miami Beach", "zip": "33140",
-  "salePrice": 2450000, "saleDate": "2026-08-01",
-  "livingSf": 2760, "lotSf": 9000, "yearBuilt": 1957, "beds": 4, "baths": 3,
+  "address": "...", "zip": "33140",
+  "price": 2450000, "soldDate": "2026-08-01",
+  "livingSF": 2760, "lotSF": 9000, "beds": 4, "baths": 3,
   "propertyClass": "sfr",            // "sfr" | "condo"
   "waterType": "Canal",              // Canal | Open Bay | Canal/Bay | None | Verify
+  "waterfront": true,
   "conditionClass": "renovated",     // or "original" | "teardown" | "unknown"
-  "subdivision": "KEYSTONE ISLAND NO 3",
-  "microMarket": "keystone",
+  "market": "keystone",
   "verified": false,
   "source": "codex_county_scrape"
 }
