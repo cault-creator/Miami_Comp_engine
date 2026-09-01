@@ -1,0 +1,20 @@
+[
+  {
+    "folio": "02-3227-001-0010",
+    "address": "590 LAKEVIEW DR",
+    "city": "Miami Beach",
+    "zip": "33140",
+    "subdivision": "LAKE VIEW SUB",
+    "legal": "LAKE VIEW SUB PB 14-42 LOT 1",
+    "living_sf": 2760,
+    "lot_sf": 9000,
+    "year_built": 1957,
+    "beds": 4,
+    "baths": 3,
+    "has_dock": true,
+    "sales_history": [
+      {"date": "08/01/2026", "price": 2450000, "qual": "QUALIFIED"},
+      {"date": "01/15/2021", "price": "$1,650,000", "qual": "QUALIFIED"}
+    ]
+  }
+]

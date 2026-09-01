@@ -14,6 +14,7 @@ No paid data vendor anywhere in this stack. Everything is county public records.
 | `scripts/auction_scraper.py` | Pure `httpx`. Foreclosure + tax-deed auction calendar (realforeclose). Runs anywhere, no browser |
 | `scripts/county_pa.py` | Property Appraiser lookup: owner, folio, SF, values, subdivision, zoning |
 | `scripts/clerk_lp_screen.py` | Clerk official-records name screen: lis pendens, tax liens, judgments, liens |
+| `scripts/import_pa_sales.py` | Convert PA sales history into clean `/api/import-sales` batches |
 
 ## Quickstart for Codex
 
@@ -58,6 +59,30 @@ python scripts/engine_client.py value "590 Lakeview Dr, Miami Beach, FL 33140"
 ```
 
 Keep `.env` private. Do not paste the key into chat, Slack, or source files.
+
+## Import PA sales
+
+Convert already-fetched PA parcel JSON into an engine import batch:
+
+```powershell
+python scripts/import_pa_sales.py --pa-json parcel_master.jsonl --out pa_sales_import.json
+```
+
+Fetch one or more PA records by address and prepare an import batch:
+
+```powershell
+python scripts/import_pa_sales.py --address "590 Lakeview Dr" --out pa_sales_import.json
+```
+
+After reviewing `pa_sales_import.json`, push to the engine:
+
+```powershell
+python scripts/import_pa_sales.py --pa-json parcel_master.jsonl --out pa_sales_import.json --push
+```
+
+The script marks PA sales as `verified: true`, dedupes by folio/date/price, skips
+likely unqualified transfers by default, and writes skipped/error records beside
+the output file for review.
 
 ## Farm markets (Caleb's buy box)
 
