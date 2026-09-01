@@ -16,6 +16,7 @@ No paid data vendor anywhere in this stack. Everything is county public records.
 | `scripts/clerk_lp_screen.py` | Clerk official-records name screen: lis pendens, tax liens, judgments, liens |
 | `scripts/build_parcel_master.py` | Batch-fetch PA parcel facts into resumable `parcel_master.jsonl` |
 | `scripts/import_pa_sales.py` | Convert PA sales history into clean `/api/import-sales` batches |
+| `scripts/import_propstream_sales.py` | Convert PropStream SOLD exports into reviewable sale batches |
 
 ## Quickstart for Codex
 
@@ -101,6 +102,26 @@ python scripts/import_pa_sales.py --pa-json parcel_master.jsonl --out pa_sales_i
 The script marks PA sales as `verified: true`, dedupes by folio/date/price, skips
 likely unqualified transfers by default, and writes skipped/error records beside
 the output file for review.
+
+## Import PropStream sold exports
+
+Convert PropStream `.xlsx` SOLD exports into an engine import batch:
+
+```powershell
+python scripts/import_propstream_sales.py `
+  "C:\Users\ultra\Downloads\Property Export Recently+SOLD+%7C+Comps+%7C+Bay+Harbour+%7C+Surfside+%7C+keystone.xlsx" `
+  "C:\Users\ultra\Downloads\Property Export Recently+SOLD+%7C+Comps+%7C+Miami+Beach.xlsx" `
+  --out propstream_sales_import.json
+```
+
+After reviewing the JSON:
+
+```powershell
+python scripts/import_propstream_sales.py <xlsx files...> --out propstream_sales_import.json --push
+```
+
+PropStream rows are marked `verified: false` because they are secondary exports.
+Promote them to verified only after cross-checking against county PA sales.
 
 ## Farm markets (Caleb's buy box)
 

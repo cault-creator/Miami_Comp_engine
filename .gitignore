@@ -1,4 +1,5 @@
 .env
+.env.txt
 .ssh/
 browser-profiles/
 work/
@@ -11,3 +12,4 @@ pa_sales_import*.json
 pa_sales_import*.txt
 parcel_master*.jsonl
 parcel_master*.json
+propstream_sales_import*.json
