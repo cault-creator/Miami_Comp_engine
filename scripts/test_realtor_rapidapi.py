@@ -74,9 +74,16 @@ def main() -> None:
     parser = argparse.ArgumentParser()
     parser.add_argument("--endpoint", required=True, help="Endpoint path from RapidAPI, e.g. /sold")
     parser.add_argument("--method", choices=["GET", "POST"], default="GET")
+    parser.add_argument("--query", default="Miami Beach, FL")
     parser.add_argument("--postal-code", default="33181")
     parser.add_argument("--status", default="sold")
     parser.add_argument("--limit", type=int, default=5)
+    parser.add_argument(
+        "--param",
+        action="append",
+        default=[],
+        help="Exact query parameter from RapidAPI, as key=value. Repeatable.",
+    )
     parser.add_argument("--out", default="work/realtor_sales_api_test_response.json")
     args = parser.parse_args()
 
@@ -92,11 +99,26 @@ def main() -> None:
         "x-rapidapi-host": host,
         "x-rapidapi-key": key,
     }
-    params = {
-        "postal_code": args.postal_code,
-        "status": args.status,
-        "limit": str(args.limit),
-    }
+    if args.param:
+        params = {}
+        for raw in args.param:
+            if "=" not in raw:
+                raise SystemExit(f"Invalid --param {raw!r}. Use key=value.")
+            name, value = raw.split("=", 1)
+            params[name] = value
+    else:
+        params = {
+            "query": args.query,
+            "offset": "0",
+            "limit": str(args.limit),
+            "lot_size_max": "0",
+            "home_size_min": "0",
+            "home_size_max": "0",
+            "home_age_min": "0",
+            "home_age_max": "9999",
+            "price_min": "0",
+            "price_max": "99999999999",
+        }
     payload = {
         "limit": args.limit,
         "offset": 0,
