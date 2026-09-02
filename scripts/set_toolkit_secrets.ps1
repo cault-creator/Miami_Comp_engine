@@ -1,7 +1,7 @@
 param(
   [string]$EnvPath = ".env",
   [string]$EngineBase = "https://judicious-cassowary-306.convex.site",
-  [string]$RapidApiHost = "realty-us.p.rapidapi.com"
+  [string]$SalesRapidApiHost = "realtor-api-data.p.rapidapi.com"
 )
 
 $ErrorActionPreference = "Stop"
@@ -43,13 +43,13 @@ function Set-EnvLine {
 
 $resolvedEnvPath = Join-Path (Get-Location) $EnvPath
 $engineKey = Read-SecretPlainText "Paste your Engine API key"
-$rapidApiKey = Read-SecretPlainText "Paste your NEW rotated RapidAPI key"
+$salesRapidApiKey = Read-SecretPlainText "Paste your Realtor Sales Data RapidAPI key"
 
 if ([string]::IsNullOrWhiteSpace($engineKey)) {
   throw "No Engine API key entered. Nothing was changed."
 }
-if ([string]::IsNullOrWhiteSpace($rapidApiKey)) {
-  throw "No RapidAPI key entered. Nothing was changed."
+if ([string]::IsNullOrWhiteSpace($salesRapidApiKey)) {
+  throw "No Realtor Sales Data RapidAPI key entered. Nothing was changed."
 }
 
 $lines = @()
@@ -59,9 +59,9 @@ if (Test-Path -LiteralPath $resolvedEnvPath) {
 
 $lines = Set-EnvLine -Lines $lines -Name "ENGINE_BASE" -Value $EngineBase
 $lines = Set-EnvLine -Lines $lines -Name "ENGINE_API_KEY" -Value $engineKey
-$lines = Set-EnvLine -Lines $lines -Name "RAPIDAPI_HOST" -Value $RapidApiHost
-$lines = Set-EnvLine -Lines $lines -Name "RAPIDAPI_KEY" -Value $rapidApiKey
+$lines = Set-EnvLine -Lines $lines -Name "SALES_RAPIDAPI_HOST" -Value $SalesRapidApiHost
+$lines = Set-EnvLine -Lines $lines -Name "SALES_RAPIDAPI_KEY" -Value $salesRapidApiKey
 
 Set-Content -LiteralPath $resolvedEnvPath -Value $lines -Encoding UTF8
-Write-Host "Updated $resolvedEnvPath with Engine and RapidAPI settings."
+Write-Host "Updated $resolvedEnvPath with Engine and Realtor Sales Data RapidAPI settings."
 Write-Host "Do not commit .env. This repo's .gitignore already excludes it."

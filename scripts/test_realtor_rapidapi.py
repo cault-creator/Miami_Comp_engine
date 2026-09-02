@@ -1,8 +1,8 @@
-"""Smoke-test Realtor/RapidAPI access without printing secrets.
+"""Smoke-test Realtor sales-data RapidAPI access without printing secrets.
 
-The script loads RAPIDAPI_HOST and RAPIDAPI_KEY from .env, calls a Realtor API
-endpoint, prints only safe response structure/counts, and saves the full JSON
-response under work/ for local inspection. work/ is ignored by Git.
+The script loads SALES_RAPIDAPI_HOST and SALES_RAPIDAPI_KEY from .env, calls a
+Realtor API endpoint, prints only safe response structure/counts, and saves the
+full JSON response under work/ for local inspection. work/ is ignored by Git.
 """
 import argparse
 import json
@@ -14,9 +14,7 @@ from typing import Any
 import httpx
 
 
-DEFAULT_HOST = "realty-us.p.rapidapi.com"
-DEFAULT_ENDPOINT = "/agents/v2/listings"
-DEFAULT_FULFILLMENT_ID = "3155600"
+DEFAULT_HOST = "realtor-api-data.p.rapidapi.com"
 
 
 def load_dotenv(path=".env") -> None:
@@ -74,20 +72,19 @@ def summarize(data: Any) -> dict[str, Any]:
 
 def main() -> None:
     parser = argparse.ArgumentParser()
-    parser.add_argument("--endpoint", default=DEFAULT_ENDPOINT)
+    parser.add_argument("--endpoint", required=True, help="Endpoint path from RapidAPI, e.g. /sold")
     parser.add_argument("--method", choices=["GET", "POST"], default="GET")
-    parser.add_argument("--fulfillment-id", default=DEFAULT_FULFILLMENT_ID)
     parser.add_argument("--postal-code", default="33181")
     parser.add_argument("--status", default="sold")
     parser.add_argument("--limit", type=int, default=5)
-    parser.add_argument("--out", default="work/realtor_rapidapi_test_response.json")
+    parser.add_argument("--out", default="work/realtor_sales_api_test_response.json")
     args = parser.parse_args()
 
     load_dotenv()
-    host = os.environ.get("RAPIDAPI_HOST", DEFAULT_HOST)
-    key = os.environ.get("RAPIDAPI_KEY")
+    host = os.environ.get("SALES_RAPIDAPI_HOST", DEFAULT_HOST)
+    key = os.environ.get("SALES_RAPIDAPI_KEY")
     if not key:
-        raise SystemExit("Missing RAPIDAPI_KEY. Run scripts/set_toolkit_secrets.ps1 first.")
+        raise SystemExit("Missing SALES_RAPIDAPI_KEY. Run scripts/set_sales_rapidapi_secret.ps1 first.")
 
     url = f"https://{host}{args.endpoint}"
     headers = {
@@ -95,7 +92,11 @@ def main() -> None:
         "x-rapidapi-host": host,
         "x-rapidapi-key": key,
     }
-    params = {"fulfillmentId": args.fulfillment_id}
+    params = {
+        "postal_code": args.postal_code,
+        "status": args.status,
+        "limit": str(args.limit),
+    }
     payload = {
         "limit": args.limit,
         "offset": 0,
