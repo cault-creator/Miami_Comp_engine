@@ -14,7 +14,7 @@ from typing import Any
 import httpx
 
 
-DEFAULT_HOST = "realtor-api-data.p.rapidapi.com"
+DEFAULT_HOST = "realtor16.p.rapidapi.com"
 
 
 def load_dotenv(path=".env") -> None:
@@ -108,16 +108,24 @@ def main() -> None:
             params[name] = value
     else:
         params = {
-            "query": args.query,
-            "offset": "0",
+            "location": args.query,
+            "page": "1",
+            "sort": "sold_date",
+            "type": "single_family",
+            "beds-min": "1",
+            "beds-max": "15",
+            "baths-min": "1",
+            "baths-max": "15",
             "limit": str(args.limit),
-            "lot_size_max": "0",
-            "home_size_min": "0",
-            "home_size_max": "0",
-            "home_age_min": "0",
-            "home_age_max": "9999",
-            "price_min": "0",
-            "price_max": "99999999999",
+            "sold_date-min": "2022-01-01",
+            "sold_price-min": "100000",
+            "sold_price-max": "999999999",
+            "search_radius": "1",
+            "sqft-min": "1000",
+            "sqft-max": "999999",
+            "lot_sqft-min": "1000",
+            "lot_sqft-max": "999999",
+            "tags": "waterfront",
         }
     payload = {
         "limit": args.limit,

@@ -1,6 +1,6 @@
 param(
   [string]$EnvPath = ".env",
-  [string]$SalesRapidApiHost = "realtor-api-data.p.rapidapi.com"
+  [string]$SalesRapidApiHost = "realtor16.p.rapidapi.com"
 )
 
 $ErrorActionPreference = "Stop"

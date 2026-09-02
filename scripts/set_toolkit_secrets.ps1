@@ -1,7 +1,7 @@
 param(
   [string]$EnvPath = ".env",
   [string]$EngineBase = "https://judicious-cassowary-306.convex.site",
-  [string]$SalesRapidApiHost = "realtor-api-data.p.rapidapi.com"
+  [string]$SalesRapidApiHost = "realtor16.p.rapidapi.com"
 )
 
 $ErrorActionPreference = "Stop"

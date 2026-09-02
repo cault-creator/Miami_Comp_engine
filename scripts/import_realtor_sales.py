@@ -15,8 +15,8 @@ import httpx
 
 
 SALE_BATCH_LIMIT = 500
-DEFAULT_HOST = "realtor-api-data.p.rapidapi.com"
-DEFAULT_ENDPOINT = "/properties/sold"
+DEFAULT_HOST = "realtor16.p.rapidapi.com"
+DEFAULT_ENDPOINT = "/search/forsold"
 WATER_STREET_HINTS = (
     " BAY ",
     "BAY DR",
@@ -199,20 +199,26 @@ def fetch_sold(args: argparse.Namespace) -> Any:
     if not key:
         raise SystemExit("Missing SALES_RAPIDAPI_KEY. Run scripts/set_sales_rapidapi_secret.ps1 first.")
     params = {
-        "query": args.query,
+        "location": args.query,
+        "sort": "sold_date",
+        "type": "single_family",
+        "beds-min": "1",
+        "beds-max": "15",
+        "baths-min": "1",
+        "baths-max": "15",
         "limit": str(args.limit),
-        "offset": str(args.offset),
-        "lot_size_min": str(args.lot_size_min),
-        "lot_size_max": str(args.lot_size_max),
-        "home_size_min": str(args.home_size_min),
-        "home_size_max": str(args.home_size_max),
-        "home_age_min": str(args.home_age_min),
-        "home_age_max": str(args.home_age_max),
-        "price_min": str(args.min_price),
-        "price_max": str(args.price_max),
-        "property_type": "single_family",
-        "expand_area": str(args.expand_area),
+        "page": str(args.page),
+        "sold_date-min": args.min_sale_date,
+        "sold_price-min": str(args.min_price),
+        "sold_price-max": str(args.price_max),
+        "search_radius": str(args.search_radius),
+        "sqft-min": str(args.home_size_min),
+        "sqft-max": str(args.home_size_max),
+        "lot_sqft-min": str(args.lot_size_min),
+        "lot_sqft-max": str(args.lot_size_max),
     }
+    if args.tags:
+        params["tags"] = args.tags
     headers = {
         "Content-Type": "application/json",
         "x-rapidapi-host": host,
@@ -249,16 +255,16 @@ def build_parser() -> argparse.ArgumentParser:
     parser.add_argument("--query", default="Miami Beach, FL")
     parser.add_argument("--endpoint", default=DEFAULT_ENDPOINT)
     parser.add_argument("--limit", type=int, default=50)
-    parser.add_argument("--offset", type=int, default=0)
+    parser.add_argument("--page", default="1")
     parser.add_argument("--lot-size-min", type=int, default=1000)
     parser.add_argument("--lot-size-max", type=int, default=9999999)
     parser.add_argument("--home-size-min", type=int, default=500)
     parser.add_argument("--home-size-max", type=int, default=999999)
-    parser.add_argument("--home-age-min", type=int, default=1920)
-    parser.add_argument("--home-age-max", type=int, default=2026)
+    parser.add_argument("--min-sale-date", default="2022-01-01")
     parser.add_argument("--min-price", type=int, default=100000)
-    parser.add_argument("--price-max", type=int, default=99999999999)
-    parser.add_argument("--expand-area", type=int, default=1)
+    parser.add_argument("--price-max", type=int, default=999999999)
+    parser.add_argument("--search-radius", type=int, default=1)
+    parser.add_argument("--tags", default="waterfront")
     parser.add_argument("--out", default="realtor_sales_import.json")
     parser.add_argument("--skipped-out", default="realtor_sales_import.skipped.json")
     parser.add_argument("--push", action="store_true")
